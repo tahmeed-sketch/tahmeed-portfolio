@@ -1,0 +1,515 @@
+html = r'''<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tahmeed Bin Serajul - Portfolio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brandBlue: "#3b82f6"
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      transition: background-color 0.7s ease, color 0.7s ease;
+    }
+
+    .hover-card-effect {
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hover-card-effect:hover {
+      transform: translateY(-6px);
+      box-shadow:
+        0 10px 25px -5px rgba(59, 130, 246, 0.25),
+        0 8px 10px -6px rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.6);
+    }
+
+    .lamp-button {
+      transition: transform 1.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lamp-cord {
+      transform-origin: top center;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .lamp-button:active .lamp-cord {
+      transform: scaleY(1.2);
+    }
+
+    /* Full-screen starting overlay */
+    #lampOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      opacity: 1;
+      visibility: visible;
+      transition:
+        opacity 0.75s ease,
+        visibility 0.75s ease;
+    }
+
+    #lampOverlay.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Initial lamp starts at the center */
+    #introLamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition:
+        top 1.15s cubic-bezier(0.4, 0, 0.2, 1),
+        left 1.15s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 1.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Lamp travels toward the header's right side */
+    #lampOverlay.is-moving #introLamp {
+      top: 32px;
+      left: calc(100% - 58px);
+      transform: translate(-50%, 0);
+    }
+
+    /* Hide everything except the initial lamp */
+    body.page-off > header,
+    body.page-off > main,
+    body.page-off > footer {
+      visibility: hidden;
+    }
+
+    body.page-off {
+      overflow: hidden;
+      background: #000 !important;
+    }
+
+    /* Light mode */
+    html.light body {
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    html.light .theme-panel {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: #e2e8f0;
+    }
+
+    html.light .theme-text {
+      color: #0f172a;
+    }
+
+    html.light .theme-muted {
+      color: #475569;
+    }
+
+    html.light .theme-border {
+      border-color: #cbd5e1;
+    }
+  </style>
+</head>
+
+<body class="page-off bg-slate-950 text-slate-100 font-sans antialiased min-h-screen selection:bg-blue-500 selection:text-white">
+
+  <!-- INITIAL FULL-SCREEN LAMP -->
+  <div id="lampOverlay" aria-label="Portfolio lamp intro">
+    <button id="introLamp"
+            aria-label="Turn on portfolio"
+            class="lamp-button group flex flex-col items-center focus:outline-none">
+      <div class="w-0.5 h-16 bg-slate-400 group-hover:bg-blue-500 transition-colors lamp-cord"></div>
+
+      <div class="p-4 rounded-full bg-slate-800 text-yellow-400
+                  shadow-lg shadow-yellow-500/30
+                  group-hover:scale-110 transition-transform">
+        <i class="fa-solid fa-lightbulb text-3xl"></i>
+      </div>
+    </button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 backdrop-blur-md
+                 bg-slate-950/80 border-b border-slate-800/60">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#hero"
+         class="text-xl font-bold tracking-tight hover:text-blue-500 transition-colors">
+        Tahmeed<span class="text-blue-500">.</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 font-medium text-slate-300">
+        <a href="#about" class="hover:text-blue-500 transition-colors">About</a>
+        <a href="#education" class="hover:text-blue-500 transition-colors">Education</a>
+        <a href="#projects" class="hover:text-blue-500 transition-colors">Projects</a>
+        <a href="#contact" class="hover:text-blue-500 transition-colors">Contact</a>
+      </nav>
+
+      <!-- HEADER LAMP -->
+      <button id="lampToggle"
+              aria-label="Turn off portfolio"
+              class="lamp-button group flex flex-col items-center focus:outline-none">
+        <div class="w-0.5 h-6 bg-slate-400 group-hover:bg-blue-500 transition-colors lamp-cord"></div>
+
+        <div class="p-2 rounded-full bg-slate-800 text-yellow-400
+                    group-hover:scale-110 transition-transform
+                    shadow-lg shadow-yellow-500/20">
+          <i class="fa-solid fa-lightbulb text-lg"></i>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-12 space-y-24">
+
+    <!-- HERO -->
+    <section id="hero"
+             class="hover-card-effect border border-slate-800 rounded-3xl
+                    p-8 md:p-12 bg-slate-900/40 backdrop-blur-sm">
+      <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-10">
+
+        <div class="flex-1 space-y-6">
+          <div class="inline-block px-3 py-1 text-xs font-semibold tracking-wider
+                      text-blue-400 uppercase rounded-full bg-blue-500/10
+                      border border-blue-500/20">
+            Welcome to my portfolio
+          </div>
+
+          <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+            Tahmeed Bin Serajul
+          </h1>
+
+          <h3 class="text-xl md:text-2xl font-semibold text-blue-500">
+            IT Student | Java &amp; HTML Developer | Visual &amp; Media Design
+          </h3>
+
+          <h4 class="text-lg italic text-slate-400 border-l-4 border-blue-500 pl-4 py-1">
+            "I build things that work and make them look like they should."
+          </h4>
+
+          <div class="flex flex-wrap gap-4 pt-4">
+            <a href="#projects"
+               class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500
+                      text-white font-medium transition-all shadow-lg shadow-blue-500/25">
+              View Work <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+            </a>
+
+            <a href="#contact"
+               class="px-6 py-3 rounded-xl border border-slate-700
+                      hover:border-blue-500 font-medium transition-all">
+              Get in Touch
+            </a>
+          </div>
+        </div>
+
+        <!-- PROFILE PICTURE -->
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600
+                      rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+
+          <img
+            src="file:///E:/html%20pari%20nah/portfolio-firstTry/tahmeedPic.JPEG.jpeg"
+            alt="Tahmeed Bin Serajul"
+            class="relative w-48 h-48 md:w-64 md:h-64 rounded-full object-cover
+                   border-4 border-slate-800 shadow-2xl"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about"
+             class="hover-card-effect border border-slate-800 rounded-3xl
+                    p-8 md:p-12 bg-slate-900/40">
+      <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-user-gear text-blue-500 text-2xl"></i>
+        About Me
+      </h2>
+
+      <p class="text-slate-300 text-lg leading-relaxed">
+        Computer Science and Engineering undergraduate at BRAC University
+        with a strong foundation in Java and visual media creation.
+        Experienced in private academic tutoring, UI/visual asset design,
+        and managing digital operations for student organizations.
+        Skilled in writing clean programming logic.
+      </p>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education"
+             class="hover-card-effect border border-slate-800 rounded-3xl
+                    p-8 md:p-12 bg-slate-900/40">
+      <h2 class="text-3xl font-bold mb-8 flex items-center gap-3">
+        <i class="fa-solid fa-graduation-cap text-blue-500 text-2xl"></i>
+        Education
+      </h2>
+
+      <div class="space-y-8 relative border-l-2 border-slate-800 ml-4 pl-6">
+
+        <div class="relative">
+          <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full
+                      bg-blue-500 border-4 border-slate-950"></div>
+          <h3 class="text-xl font-bold">BRAC University</h3>
+          <p class="text-blue-400 font-medium">
+            Bachelor of Science in Computer Science and Engineering
+          </p>
+          <span class="text-sm text-slate-400">
+            Dhaka, Bangladesh | 2026 – Present
+          </span>
+        </div>
+
+        <div class="relative">
+          <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full
+                      bg-slate-700 border-4 border-slate-950"></div>
+          <h3 class="text-xl font-bold">
+            Birshreshtha Noor Mohammad Public College
+          </h3>
+          <p class="text-blue-400 font-medium">
+            Higher Secondary Certificate (HSC)
+          </p>
+          <span class="text-sm text-slate-400">
+            Dhaka, Bangladesh | 2023 – 2025
+          </span>
+        </div>
+
+        <div class="relative">
+          <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full
+                      bg-slate-700 border-4 border-slate-950"></div>
+          <h3 class="text-xl font-bold">Ideal School and College</h3>
+          <p class="text-blue-400 font-medium">
+            Secondary School Certificate (SSC)
+          </p>
+          <span class="text-sm text-slate-400">
+            Dhaka, Bangladesh | 2016 – 2023
+          </span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="space-y-8">
+      <div>
+        <h2 class="text-3xl font-bold flex items-center gap-3">
+          <i class="fa-solid fa-laptop-code text-blue-500 text-2xl"></i>
+          Featured Projects
+        </h2>
+
+        <p class="text-slate-400 mt-1">
+          Explore my visual media design portfolio and programming codebase repositories.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- PROJECT 1 -->
+        <a href="https://drive.google.com/drive/folders/1xO4QjcRp8wbwE18RWJJ0be1RLH0KBjY7?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="hover-card-effect group block border border-slate-800
+                  rounded-3xl p-8 bg-slate-900/40 relative overflow-hidden">
+
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 rounded-2xl bg-blue-500/10 text-blue-400">
+              <i class="fa-solid fa-palette text-2xl"></i>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square
+                      text-slate-500 group-hover:text-blue-500 transition-colors"></i>
+          </div>
+
+          <h3 class="text-2xl font-bold group-hover:text-blue-400 transition-colors mb-2">
+            Poster &amp; Visual Assets Portfolio
+          </h3>
+
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            A curated showcase of event posters, graphic designs, and digital
+            visual identity materials created using Adobe Photoshop and related media tools.
+          </p>
+
+          <div class="flex flex-wrap gap-2 text-xs font-semibold text-blue-400">
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Graphic Design
+            </span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Visual Media
+            </span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Branding
+            </span>
+          </div>
+        </a>
+
+        <!-- PROJECT 2 -->
+        <a href="https://drive.google.com/drive/folders/1uoRYfLHhKJFbk0GPNAl5bhbpUqG_2uTJ?usp=sharing"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="hover-card-effect group block border border-slate-800
+                  rounded-3xl p-8 bg-slate-900/40 relative overflow-hidden">
+
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 rounded-2xl bg-blue-500/10 text-blue-400">
+              <i class="fa-solid fa-code text-2xl"></i>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square
+                      text-slate-500 group-hover:text-blue-500 transition-colors"></i>
+          </div>
+
+          <h3 class="text-2xl font-bold group-hover:text-blue-400 transition-colors mb-2">
+            Java Codebase &amp; Programming Assignments
+          </h3>
+
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            A comprehensive collection of Java projects, academic programming
+            assignments, algorithms, and practical code implementations focusing on clean logic.
+          </p>
+
+          <div class="flex flex-wrap gap-2 text-xs font-semibold text-blue-400">
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Java
+            </span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Algorithms
+            </span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+              Object-Oriented Programming
+            </span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact"
+             class="hover-card-effect border border-slate-800 rounded-3xl
+                    p-8 md:p-12 bg-slate-900/40 text-center space-y-6">
+
+      <h2 class="text-3xl font-bold">Let's Connect</h2>
+
+      <p class="text-slate-400 max-w-lg mx-auto">
+        Feel free to reach out for collaborations, academic inquiries,
+        or design and development projects.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-6 pt-4">
+
+        <a href="mailto:tahmeed324@gmail.com"
+           class="flex items-center gap-3 px-6 py-3 rounded-2xl
+                  bg-slate-800 hover:bg-blue-600 hover:text-white
+                  transition-all border border-slate-700">
+          <i class="fa-solid fa-envelope text-blue-400"></i>
+          <span class="font-medium">tahmeed324@gmail.com</span>
+        </a>
+
+        <a href="https://instagram.com/tah.meed_"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="flex items-center gap-3 px-6 py-3 rounded-2xl
+                  bg-slate-800 hover:bg-blue-600 hover:text-white
+                  transition-all border border-slate-700">
+          <i class="fa-brands fa-instagram text-pink-500"></i>
+          <span class="font-medium">@tah.meed_</span>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/60 py-8 text-center text-sm text-slate-500">
+    <p>
+      &copy; <span id="year"></span> Tahmeed Bin Serajul. All rights reserved.
+    </p>
+  </footer>
+
+  <!-- LAMP LOGIC -->
+  <script>
+    const lampOverlay = document.getElementById("lampOverlay");
+    const introLamp = document.getElementById("introLamp");
+    const lampToggle = document.getElementById("lampToggle");
+    const body = document.body;
+
+    let isPortfolioOn = false;
+    let isAnimating = false;
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function turnOnPortfolio() {
+      if (isAnimating || isPortfolioOn) return;
+
+      isAnimating = true;
+      isPortfolioOn = true;
+
+      // Move the center lamp toward the header
+      lampOverlay.classList.add("is-moving");
+
+      // Reveal the page while the lamp travels
+      setTimeout(() => {
+        body.classList.remove("page-off");
+      }, 450);
+
+      // Remove the overlay after the movement
+      setTimeout(() => {
+        lampOverlay.classList.add("is-hidden");
+        isAnimating = false;
+      }, 1200);
+    }
+
+    function turnOffPortfolio() {
+      if (isAnimating || !isPortfolioOn) return;
+
+      isAnimating = true;
+      isPortfolioOn = false;
+
+      // Show the overlay first
+      lampOverlay.classList.remove("is-hidden");
+
+      // Hide the portfolio
+      body.classList.add("page-off");
+
+      // Return the lamp to the center
+      setTimeout(() => {
+        lampOverlay.classList.remove("is-moving");
+      }, 80);
+
+      setTimeout(() => {
+        isAnimating = false;
+      }, 1250);
+    }
+
+    introLamp.addEventListener("click", turnOnPortfolio);
+    lampToggle.addEventListener("click", turnOffPortfolio);
+  </script>
+
+</body>
+</html>
+'''
+
+path = "/mnt/data/tahmeed_portfolio_lamp_fixed.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(html)
+
+print(f"Created: {path}")
